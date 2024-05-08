@@ -14,6 +14,7 @@ import java.time.Month;
 class FilmorateApplicationTests {
     FilmController filmController = new FilmController();
 	UserController userController = new UserController();
+
 	@Test
 	void filmAddTest() {
 		Film film = new Film("Титаник", "Романтическая драма и фильм-катастрофа",
