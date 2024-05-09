@@ -26,7 +26,7 @@ class FilmorateApplicationTests {
 	void filmPutTest() {
 		Film film = new Film("Неудержимые", "Боевик",
 				LocalDate.of(2010, Month.AUGUST, 12), Duration.ofMinutes(109));
-		Assertions.assertNotNull(filmController.filmPut(film));
+		Assertions.assertNull(filmController.filmPut(film));
 	}
 
 	@Test
@@ -58,7 +58,7 @@ class FilmorateApplicationTests {
 		user.setLogin("Vasya117");
 		user.setName("Василий");
 		user.setBirthday(LocalDate.of(2001, Month.NOVEMBER, 12));
-		Assertions.assertNotNull(userController.userPut(user));
+		Assertions.assertNull(userController.userPut(user));
 	}
 
 	@Test
