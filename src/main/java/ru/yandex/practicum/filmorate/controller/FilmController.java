@@ -44,7 +44,6 @@ public class FilmController {
 
     @PutMapping
     public Film filmPut(@RequestBody Film film) throws ValidationException {
-        try {
             log.setLevel(Level.INFO);
             if (films.containsKey(film.getId())) {
                 if (film.getName() == null || film.getName().isBlank()) {
@@ -64,10 +63,7 @@ public class FilmController {
             } else {
                 throw new ValidationException("Указанного фильма не существует");
             }
-        } catch (ValidationException e) {
-            System.out.println(e.getMessage());
-        }
-        return film;
+
     }
 
     @GetMapping

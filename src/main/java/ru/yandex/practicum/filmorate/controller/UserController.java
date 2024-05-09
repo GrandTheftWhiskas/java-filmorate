@@ -43,7 +43,6 @@ public class UserController {
 
     @PutMapping
     public User userPut(@RequestBody User user) throws ValidationException {
-            try {
                 log.setLevel(Level.INFO);
                 if (users.containsKey(user.getId())) {
                     if (user.getEmail().isBlank() || !user.getEmail().contains("@")) {
@@ -67,10 +66,7 @@ public class UserController {
                 } else {
                     throw new ValidationException("Указанного пользователя не существует");
                 }
-            } catch (ValidationException e) {
-                System.out.println(e.getMessage());
-            }
-            return user;
+
     }
 
     @GetMapping
