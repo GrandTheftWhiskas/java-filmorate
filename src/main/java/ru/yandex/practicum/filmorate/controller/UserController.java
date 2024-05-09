@@ -13,38 +13,14 @@ import java.util.HashMap;
 import java.util.Map;
 
 @RestController
-@RequestMapping("/filmorate/users")
+@RequestMapping("/users")
 public class UserController {
     private static Logger log = (ch.qos.logback.classic.Logger) LoggerFactory.getLogger("UserController");
     private Map<Integer, User> users = new HashMap<>();
 
     @PostMapping
     public User userPost(@RequestBody User user) {
-       log.setLevel(Level.INFO);
-       if (user.getEmail().isBlank() || !user.getEmail().contains("@")) {
-           throw new ValidationException("Электронная почта не может быть пустой и должна содержать символ @");
-       }
-
-       if (user.getLogin().isBlank() || user.getLogin().contains(" ")) {
-           throw new ValidationException("Логин не может быть пустым и содержать пробелы");
-       }
-
-       if (user.getName() == null || user.getName().isBlank()) {
-           user.setName(user.getLogin());
-       }
-
-       if (user.getBirthday().isAfter(LocalDate.now())) {
-           throw new ValidationException("Дата рождения не может быть в будущем");
-       }
-
-       user.setId(getNextId());
-       users.put(user.getId(), user);
-       return user;
-    }
-
-    @PutMapping
-    public User userPut(@RequestBody User user) {
-        if (users.containsKey(user.getId())) {
+        try {
             log.setLevel(Level.INFO);
             if (user.getEmail().isBlank() || !user.getEmail().contains("@")) {
                 throw new ValidationException("Электронная почта не может быть пустой и должна содержать символ @");
@@ -62,12 +38,46 @@ public class UserController {
                 throw new ValidationException("Дата рождения не может быть в будущем");
             }
 
+            user.setId(getNextId());
             users.put(user.getId(), user);
             return user;
-        } else {
-            System.out.println("Указанного пользователя не существует");
-            return null;
+        } catch (ValidationException e) {
+            System.out.println(e.getMessage());
         }
+        return null;
+    }
+
+    @PutMapping
+    public User userPut(@RequestBody User user) {
+        try {
+            if (users.containsKey(user.getId())) {
+                log.setLevel(Level.INFO);
+                if (user.getEmail().isBlank() || !user.getEmail().contains("@")) {
+                    throw new ValidationException("Электронная почта не может быть пустой и должна содержать символ @");
+                }
+
+                if (user.getLogin().isBlank() || user.getLogin().contains(" ")) {
+                    throw new ValidationException("Логин не может быть пустым и содержать пробелы");
+                }
+
+                if (user.getName() == null || user.getName().isBlank()) {
+                    user.setName(user.getLogin());
+                }
+
+                if (user.getBirthday().isAfter(LocalDate.now())) {
+                    throw new ValidationException("Дата рождения не может быть в будущем");
+                }
+
+                users.put(user.getId(), user);
+                return user;
+            } else {
+                System.out.println("Указанного пользователя не существует");
+                return null;
+            }
+        } catch (ValidationException e) {
+            System.out.println(e.getMessage());
+        }
+        return null;
     }
 
     @GetMapping
