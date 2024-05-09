@@ -43,30 +43,34 @@ public class UserController {
 
     @PutMapping
     public User userPut(@RequestBody User user) throws ValidationException {
-            log.setLevel(Level.INFO);
-            if (users.containsKey(user.getId())) {
-                if (user.getEmail().isBlank() || !user.getEmail().contains("@")) {
-                    throw new ValidationException("Электронная почта не может быть пустой и должна содержать символ @");
-                }
+            try {
+                log.setLevel(Level.INFO);
+                if (users.containsKey(user.getId())) {
+                    if (user.getEmail().isBlank() || !user.getEmail().contains("@")) {
+                        throw new ValidationException("Электронная почта не может быть пустой и должна содержать символ @");
+                    }
 
-                if (user.getLogin().isBlank() || user.getLogin().contains(" ")) {
-                    throw new ValidationException("Логин не может быть пустым и содержать пробелы");
-                }
+                    if (user.getLogin().isBlank() || user.getLogin().contains(" ")) {
+                        throw new ValidationException("Логин не может быть пустым и содержать пробелы");
+                    }
 
-                if (user.getName() == null || user.getName().isBlank()) {
-                    user.setName(user.getLogin());
-                }
+                    if (user.getName() == null || user.getName().isBlank()) {
+                        user.setName(user.getLogin());
+                    }
 
-                if (user.getBirthday().isAfter(LocalDate.now())) {
-                    throw new ValidationException("Дата рождения не может быть в будущем");
-                }
+                    if (user.getBirthday().isAfter(LocalDate.now())) {
+                        throw new ValidationException("Дата рождения не может быть в будущем");
+                    }
 
-                users.put(user.getId(), user);
-                return user;
-            } else {
-                System.out.println("Указанного пользователя не существует");
-                return null;
+                    users.put(user.getId(), user);
+                    return user;
+                } else {
+                    throw new ValidationException("Указанного пользователя не существует");
+                }
+            } catch (ValidationException e) {
+                System.out.println(e.getMessage());
             }
+            return user;
     }
 
     @GetMapping
