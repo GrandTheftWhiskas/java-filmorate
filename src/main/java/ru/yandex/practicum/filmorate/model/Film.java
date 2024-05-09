@@ -11,4 +11,8 @@ public class Film {
     private final LocalDate releaseDate;
     private final Duration duration;
 
+    public long getDuration() {
+        return duration.toMinutes();
+    }
+
 }

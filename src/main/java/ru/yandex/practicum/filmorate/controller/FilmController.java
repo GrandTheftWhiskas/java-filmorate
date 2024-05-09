@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.filmorate.exceptions.ValidationException;
 import ru.yandex.practicum.filmorate.model.Film;
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
@@ -17,6 +18,7 @@ import static java.time.Month.DECEMBER;
 public class FilmController {
     private static Logger log = (ch.qos.logback.classic.Logger) LoggerFactory.getLogger("FilmController");
     private Map<Integer, Film> films = new HashMap<>();
+    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm:ss");
 
     @PostMapping
     public Film filmPost(@RequestBody Film film) {
@@ -30,7 +32,7 @@ public class FilmController {
                 throw new ValidationException("Описание не может быть больше 200 символов");
             }
 
-            if (film.getDuration().toMinutes() < 0) {
+            if (film.getDuration() < 0) {
                 throw new ValidationException("Продолжительность не может быть отрицательным числом");
             }
 
@@ -44,7 +46,7 @@ public class FilmController {
         } catch (ValidationException e) {
             System.out.println(e.getMessage());
         }
-        return null;
+        return film;
     }
 
     @PutMapping
@@ -59,7 +61,7 @@ public class FilmController {
                     throw new ValidationException("Описание не может быть больше 200 символов");
                 }
 
-                if (film.getDuration().toMinutes() < 0) {
+                if (film.getDuration() < 0) {
                     throw new ValidationException("Продолжительность не может быть отрицательным числом");
                 }
 
@@ -67,12 +69,12 @@ public class FilmController {
                 return film;
             } else {
                 System.out.println("Указанного фильма не существует");
-                return null;
+                return film;
             }
         } catch (ValidationException e) {
             System.out.println(e.getMessage());
         }
-        return null;
+        return film;
     }
 
     @GetMapping

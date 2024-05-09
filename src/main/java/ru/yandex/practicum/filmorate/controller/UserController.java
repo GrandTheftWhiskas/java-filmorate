@@ -43,7 +43,7 @@ public class UserController {
         } catch (ValidationException e) {
             System.out.println(e.getMessage());
         }
-        return null;
+        return user;
     }
 
     @PutMapping
@@ -71,12 +71,12 @@ public class UserController {
                 return user;
             } else {
                 System.out.println("Указанного пользователя не существует");
-                return null;
+                return user;
             }
         } catch (ValidationException e) {
             System.out.println(e.getMessage());
         }
-        return null;
+        return user;
     }
 
     @GetMapping
