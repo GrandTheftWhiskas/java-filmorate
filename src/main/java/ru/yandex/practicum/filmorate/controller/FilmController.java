@@ -62,7 +62,7 @@ public class FilmController {
                 return film;
             } else {
                 System.out.println("Указанного фильма не существует");
-                return film;
+                return null;
             }
     }
 

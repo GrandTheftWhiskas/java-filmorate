@@ -65,7 +65,7 @@ public class UserController {
                 return user;
             } else {
                 System.out.println("Указанного пользователя не существует");
-                return user;
+                return null;
             }
     }
 
