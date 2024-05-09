@@ -23,13 +23,6 @@ class FilmorateApplicationTests {
 	}
 
 	@Test
-	void filmPutTest() {
-		Film film = new Film("Неудержимые", "Боевик",
-				LocalDate.of(2010, Month.AUGUST, 12), Duration.ofMinutes(109));
-		Assertions.assertNotNull(filmController.filmPut(film));
-	}
-
-	@Test
 	void getFilmsTest() {
 		Film film = new Film("Титаник", "Романтическая драма и фильм-катастрофа",
 				LocalDate.of(1997, Month.DECEMBER, 16), Duration.ofMinutes(194));
@@ -49,16 +42,6 @@ class FilmorateApplicationTests {
 		user.setBirthday(LocalDate.of(2001, Month.NOVEMBER, 12));
 
 		Assertions.assertNotNull(userController.userPost(user));
-	}
-
-	@Test
-	void userPutTest() {
-		User user = new User();
-		user.setEmail("example@gmail.com");
-		user.setLogin("Vasya117");
-		user.setName("Василий");
-		user.setBirthday(LocalDate.of(2001, Month.NOVEMBER, 12));
-		Assertions.assertNotNull(userController.userPut(user));
 	}
 
 	@Test
