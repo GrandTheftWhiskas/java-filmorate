@@ -7,7 +7,6 @@ import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.filmorate.exceptions.ValidationException;
 import ru.yandex.practicum.filmorate.model.Film;
 import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
@@ -18,11 +17,9 @@ import static java.time.Month.DECEMBER;
 public class FilmController {
     private static Logger log = (ch.qos.logback.classic.Logger) LoggerFactory.getLogger("FilmController");
     private Map<Integer, Film> films = new HashMap<>();
-    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm:ss");
 
     @PostMapping
-    public Film filmPost(@RequestBody Film film) {
-        try {
+    public Film filmPost(@RequestBody Film film) throws ValidationException {
             log.setLevel(Level.INFO);
             if (film.getName() == null || film.getName().isBlank()) {
                 throw new ValidationException("Имя не может быть пустым");
@@ -43,10 +40,6 @@ public class FilmController {
             film.setId(getNextId());
             films.put(film.getId(), film);
             return film;
-        } catch (ValidationException e) {
-            System.out.println(e.getMessage());
-        }
-        return film;
     }
 
     @PutMapping
