@@ -6,7 +6,6 @@ import ru.yandex.practicum.filmorate.model.User;
 import ch.qos.logback.classic.Logger;
 import ch.qos.logback.classic.Level;
 import org.slf4j.LoggerFactory;
-
 import java.time.LocalDate;
 import java.util.Collection;
 import java.util.HashMap;
