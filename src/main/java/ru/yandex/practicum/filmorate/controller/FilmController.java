@@ -43,9 +43,8 @@ public class FilmController {
     }
 
     @PutMapping
-    public Film filmPut(@RequestBody Film film) {
+    public Film filmPut(@RequestBody Film film) throws ValidationException {
         log.setLevel(Level.INFO);
-        try {
             if (films.containsKey(film.getId())) {
                 if (film.getName() == null || film.getName().isBlank()) {
                     throw new ValidationException("Имя не может быть пустым");
@@ -65,10 +64,6 @@ public class FilmController {
                 System.out.println("Указанного фильма не существует");
                 return film;
             }
-        } catch (ValidationException e) {
-            System.out.println(e.getMessage());
-        }
-        return film;
     }
 
     @GetMapping

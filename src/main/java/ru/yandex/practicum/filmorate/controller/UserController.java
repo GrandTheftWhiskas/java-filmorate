@@ -18,8 +18,7 @@ public class UserController {
     private Map<Integer, User> users = new HashMap<>();
 
     @PostMapping
-    public User userPost(@RequestBody User user) {
-        try {
+    public User userPost(@RequestBody User user) throws ValidationException {
             log.setLevel(Level.INFO);
             if (user.getEmail().isBlank() || !user.getEmail().contains("@")) {
                 throw new ValidationException("Электронная почта не может быть пустой и должна содержать символ @");
@@ -40,15 +39,10 @@ public class UserController {
             user.setId(getNextId());
             users.put(user.getId(), user);
             return user;
-        } catch (ValidationException e) {
-            System.out.println(e.getMessage());
-        }
-        return user;
     }
 
     @PutMapping
-    public User userPut(@RequestBody User user) {
-        try {
+    public User userPut(@RequestBody User user) throws ValidationException {
             log.setLevel(Level.INFO);
             if (users.containsKey(user.getId())) {
                 if (user.getEmail().isBlank() || !user.getEmail().contains("@")) {
@@ -73,10 +67,6 @@ public class UserController {
                 System.out.println("Указанного пользователя не существует");
                 return user;
             }
-        } catch (ValidationException e) {
-            System.out.println(e.getMessage());
-        }
-        return user;
     }
 
     @GetMapping
