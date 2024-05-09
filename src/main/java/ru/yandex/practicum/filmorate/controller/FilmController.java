@@ -51,6 +51,7 @@ public class FilmController {
 
     @PutMapping
     public Film filmPut(@RequestBody Film film) {
+        log.setLevel(Level.INFO);
         try {
             if (films.containsKey(film.getId())) {
                 if (film.getName() == null || film.getName().isBlank()) {

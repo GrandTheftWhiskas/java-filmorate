@@ -49,8 +49,8 @@ public class UserController {
     @PutMapping
     public User userPut(@RequestBody User user) {
         try {
+            log.setLevel(Level.INFO);
             if (users.containsKey(user.getId())) {
-                log.setLevel(Level.INFO);
                 if (user.getEmail().isBlank() || !user.getEmail().contains("@")) {
                     throw new ValidationException("Электронная почта не может быть пустой и должна содержать символ @");
                 }

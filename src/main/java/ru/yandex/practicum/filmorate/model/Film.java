@@ -3,16 +3,18 @@ import lombok.*;
 import java.time.Duration;
 import java.time.LocalDate;
 
-@Data
+@Getter
+@RequiredArgsConstructor
+@EqualsAndHashCode
 public class Film {
+    @Setter
     private int id;
     private final String name;
     private final String description;
     private final LocalDate releaseDate;
     private final Duration duration;
 
-    public long getDuration() {
-        return duration.toMinutes();
+    public int getDuration() {
+        return (int) duration.toSeconds();
     }
-
 }
