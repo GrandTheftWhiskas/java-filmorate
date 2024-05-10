@@ -1,7 +1,6 @@
 package ru.yandex.practicum.filmorate.controller;
 
-import ch.qos.logback.classic.Logger;
-import ch.qos.logback.classic.Level;
+import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.filmorate.exceptions.ValidationException;
@@ -15,17 +14,18 @@ import static java.time.Month.DECEMBER;
 @RestController
 @RequestMapping("/films")
 public class FilmController {
-    private static Logger log = (ch.qos.logback.classic.Logger) LoggerFactory.getLogger("FilmController");
+    private static final int MAX_SYMBOLS = 200;
+    private static final LocalDate MOVIE_BIRTHDAY = LocalDate.of(1895, DECEMBER, 28);
+    private static Logger log = LoggerFactory.getLogger("FilmController");
     private Map<Integer, Film> films = new HashMap<>();
 
     @PostMapping
-    public Film filmPost(@RequestBody Film film) throws ValidationException {
-            log.setLevel(Level.INFO);
+    public Film filmPost(@RequestBody Film film) {
             if (film.getName() == null || film.getName().isBlank()) {
                 throw new ValidationException("Имя не может быть пустым");
             }
 
-            if (film.getDescription().length() > 200) {
+            if (film.getDescription().length() > MAX_SYMBOLS) {
                 throw new ValidationException("Описание не может быть больше 200 символов");
             }
 
@@ -33,7 +33,7 @@ public class FilmController {
                 throw new ValidationException("Продолжительность не может быть отрицательным числом");
             }
 
-            if (film.getReleaseDate().isBefore(LocalDate.of(1895, DECEMBER, 28))) {
+            if (film.getReleaseDate().isBefore(MOVIE_BIRTHDAY)) {
                 throw new ValidationException("Указана неверная дата");
             }
 
@@ -43,8 +43,7 @@ public class FilmController {
     }
 
     @PutMapping
-    public Film filmPut(@RequestBody Film film) throws ValidationException {
-            log.setLevel(Level.INFO);
+    public Film filmPut(@RequestBody Film film) {
             if (films.containsKey(film.getId())) {
                 if (film.getName() == null || film.getName().isBlank()) {
                     throw new ValidationException("Имя не может быть пустым");
