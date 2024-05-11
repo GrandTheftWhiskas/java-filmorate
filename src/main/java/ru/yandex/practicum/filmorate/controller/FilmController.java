@@ -1,7 +1,6 @@
 package ru.yandex.practicum.filmorate.controller;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.filmorate.exceptions.ValidationException;
 import ru.yandex.practicum.filmorate.model.Film;
@@ -13,10 +12,10 @@ import static java.time.Month.DECEMBER;
 
 @RestController
 @RequestMapping("/films")
+@Slf4j
 public class FilmController {
     private static final int MAX_SYMBOLS = 200;
     private static final LocalDate MOVIE_BIRTHDAY = LocalDate.of(1895, DECEMBER, 28);
-    private static Logger log = LoggerFactory.getLogger("FilmController");
     private Map<Integer, Film> films = new HashMap<>();
 
     @PostMapping

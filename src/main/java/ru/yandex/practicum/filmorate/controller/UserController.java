@@ -1,10 +1,9 @@
 package ru.yandex.practicum.filmorate.controller;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.filmorate.exceptions.ValidationException;
 import ru.yandex.practicum.filmorate.model.User;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import java.time.LocalDate;
 import java.util.Collection;
 import java.util.HashMap;
@@ -12,8 +11,8 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("/users")
+@Slf4j
 public class UserController {
-    private static Logger log = LoggerFactory.getLogger("UserController");
     private Map<Integer, User> users = new HashMap<>();
 
     @PostMapping
