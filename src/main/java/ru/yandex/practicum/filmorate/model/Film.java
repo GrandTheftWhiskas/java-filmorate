@@ -5,12 +5,14 @@ import jakarta.validation.constraints.NotBlank;
 import lombok.*;
 import java.time.Duration;
 import java.time.LocalDate;
+import java.util.Set;
 
 @Getter
 @RequiredArgsConstructor
 @EqualsAndHashCode
 @Valid
 public class Film {
+    private Set<Long> likes;
     @Setter
     private int id;
     @NotBlank
@@ -22,5 +24,17 @@ public class Film {
 
     public int getDuration() {
         return (int) duration.toSeconds();
+    }
+
+    public void like(long id) {
+        likes.add(id);
+    }
+
+    public void delLike(long id) {
+        likes.remove(id);
+    }
+
+    public int getLikes() {
+        return likes.size();
     }
 }
