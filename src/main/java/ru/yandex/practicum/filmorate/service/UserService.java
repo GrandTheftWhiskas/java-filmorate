@@ -2,10 +2,10 @@ package ru.yandex.practicum.filmorate.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import ru.yandex.practicum.filmorate.exceptions.ValidationException;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.storage.user.UserStorage;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
 
@@ -18,15 +18,20 @@ public class UserService {
         this.userStorage = userStorage;
     }
 
-    public User addFriend(long id, long friendId) {
+    public List<User> addFriend(long id, long friendId) {
         User user1 = userStorage.getUser(id);
         User user2 = userStorage.getUser(friendId);
         if (user1 == null) {
             throw new NullPointerException("Пользователя не существует");
         }
+
+        if (user2 == null) {
+            throw new NullPointerException("Друга не существует");
+        }
+
         user1.addFriend(friendId);
         user2.addFriend(id);
-        return user1;
+        return Arrays.asList(user1, user2);
     }
 
     public User delFriend(long id, long friendId) {
@@ -41,19 +46,24 @@ public class UserService {
         }
 
         if (!user.getFriends().contains(friendId)) {
-            throw new ValidationException("Пользователь не был добавлен в друзья");
+            System.out.println("Пользователь не был добавлен в друзья");
+            return user;
         }
         user.delFriend(friendId);
         user1.delFriend(id);
         return user;
     }
 
-    public List<Long> getFriends(long id) {
+    public List<User> getFriends(long id) {
+        List<User> returnList = new ArrayList<>();
         User user = userStorage.getUser(id);
         if (user == null) {
             throw new NullPointerException("Пользователя с указанным ID не существует");
         }
-        return user.getFriends().stream().toList();
+        for (long userId : user.getFriends()) {
+            returnList.add(userStorage.getUser(userId));
+        }
+        return returnList;
     }
 
     public List<User> getMutualFriends(long id, long otherId) {

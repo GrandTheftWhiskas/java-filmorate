@@ -54,7 +54,7 @@ public class InMemoryFilmStorage implements FilmStorage {
             films.put(film.getId(), film);
             return film;
         } else {
-            throw new ValidationException("Указанного фильма не существует");
+            throw new NullPointerException("Указанного фильма не существует");
         }
     }
 

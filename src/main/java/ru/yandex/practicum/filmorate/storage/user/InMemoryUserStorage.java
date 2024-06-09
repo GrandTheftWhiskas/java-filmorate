@@ -53,7 +53,7 @@ public class InMemoryUserStorage implements UserStorage {
             users.put(user.getId(), user);
             return user;
         } else {
-            throw new ValidationException("Указанного пользователя не существует");
+            throw new NullPointerException("Указанного пользователя не существует");
         }
 
     }
