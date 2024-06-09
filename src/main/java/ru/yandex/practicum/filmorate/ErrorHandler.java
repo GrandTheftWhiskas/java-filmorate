@@ -12,19 +12,19 @@ public class ErrorHandler {
 
     @ExceptionHandler
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public static String handleValid(ValidationException e) {
-        return "Произошла ошибка валидации: " + e.getMessage();
+    public static StackTraceElement[] handleValid(ValidationException e) {
+        return e.getStackTrace();
     }
 
     @ExceptionHandler
     @ResponseStatus(HttpStatus.NOT_FOUND)
-    public static String handleNotFound(NullPointerException e) {
-        return "Аргумент не найден: " + e.getMessage();
+    public static StackTraceElement[] handleNotFound(NullPointerException e) {
+        return e.getStackTrace();
     }
 
     @ExceptionHandler
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
-    public static String handleServerError(HttpServerErrorException.InternalServerError e) {
-        return "Произошла ошибка на стороне сервера: " + e.getMessage();
+    public static StackTraceElement[] handleServerError(HttpServerErrorException.InternalServerError e) {
+        return e.getStackTrace();
     }
 }

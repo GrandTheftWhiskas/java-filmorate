@@ -19,21 +19,24 @@ public class UserService {
     }
 
     public User addFriend(long id, long friendId) {
-        User user = userStorage.getUser(id);
-        if (userStorage.getUser(friendId) == null) {
+        User user1 = userStorage.getUser(id);
+        User user2 = userStorage.getUser(friendId);
+        if (user1 == null) {
             throw new NullPointerException("Пользователя не существует");
         }
-        user.addFriend(friendId);
-        return user;
+        user1.addFriend(friendId);
+        user2.addFriend(id);
+        return user1;
     }
 
     public User delFriend(long id, long friendId) {
         User user = userStorage.getUser(id);
+        User user1 = userStorage.getUser(friendId);
         if (user == null) {
             throw new NullPointerException("Пользователя с указанным ID не существует");
         }
 
-        if (userStorage.getUser(friendId) == null) {
+        if (user1 == null) {
             throw new NullPointerException("Друга с указанным ID не существует");
         }
 
@@ -41,6 +44,7 @@ public class UserService {
             throw new ValidationException("Пользователь не был добавлен в друзья");
         }
         user.delFriend(friendId);
+        user1.delFriend(id);
         return user;
     }
 
@@ -52,12 +56,12 @@ public class UserService {
         return user.getFriends().stream().toList();
     }
 
-    public List<Long> getMutualFriends(long id, long otherId) {
+    public List<User> getMutualFriends(long id, long otherId) {
         Set<Long> list1 = userStorage.getUser(id).getFriends();
-        List<Long> returnList = new ArrayList<>();
+        List<User> returnList = new ArrayList<>();
         for (long friendId : userStorage.getUser(otherId).getFriends()) {
             if (!list1.add(friendId)) {
-                returnList.add(friendId);
+                returnList.add(userStorage.getUser(friendId));
             }
         }
         return returnList;

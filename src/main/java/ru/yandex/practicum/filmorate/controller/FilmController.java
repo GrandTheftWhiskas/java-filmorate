@@ -1,6 +1,5 @@
 package ru.yandex.practicum.filmorate.controller;
 
-import jakarta.validation.constraints.PositiveOrZero;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
@@ -49,7 +48,7 @@ public class FilmController {
 
     @GetMapping("/popular")
     @ResponseStatus(HttpStatus.OK)
-    public Collection<Film> getMostPopularFilms(@RequestBody @RequestParam(required = false) @PositiveOrZero int count) {
+    public Collection<Film> getMostPopularFilms(@RequestParam(defaultValue = "10") int count) {
         return filmStorage.getMostPopularFilms(count);
     }
 }
