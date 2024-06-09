@@ -18,16 +18,16 @@ public class UserService {
         this.userStorage = userStorage;
     }
 
-    public String addFriend(long id, long friendId) {
+    public User addFriend(long id, long friendId) {
         User user = userStorage.getUser(id);
         if (userStorage.getUser(friendId) == null) {
             throw new NullPointerException("Пользователя не существует");
         }
         user.addFriend(friendId);
-        return "Пользователь добавлен в друзья";
+        return user;
     }
 
-    public String delFriend(long id, long friendId) {
+    public User delFriend(long id, long friendId) {
         User user = userStorage.getUser(id);
         if (user == null) {
             throw new NullPointerException("Пользователя с указанным ID не существует");
@@ -41,7 +41,7 @@ public class UserService {
             throw new ValidationException("Пользователь не был добавлен в друзья");
         }
         user.delFriend(friendId);
-        return "Пользователь удален из друзей";
+        return user;
     }
 
     public List<Long> getFriends(long id) {

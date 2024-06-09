@@ -10,6 +10,7 @@ import java.util.Set;
 
 @Getter
 @EqualsAndHashCode
+@ToString
 @RequiredArgsConstructor
 @Valid
 public class Film {

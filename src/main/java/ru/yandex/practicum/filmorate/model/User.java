@@ -2,22 +2,28 @@ package ru.yandex.practicum.filmorate.model;
 
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
-import lombok.Data;
+import lombok.*;
+
 import java.time.LocalDate;
 import java.util.HashSet;
 import java.util.Set;
 
-@Data
+@Getter
+@EqualsAndHashCode
+@ToString
+@RequiredArgsConstructor
 @Valid
 public class User {
     private Set<Long> friends = new HashSet<>();
+    @Setter
     private long id;
     @NotBlank
-    private String email;
+    private final String email;
     @NotBlank
-    private String login;
+    private final String login;
+    @Setter
     private String name;
-    private LocalDate birthday;
+    private final LocalDate birthday;
 
     public void addFriend(long id) {
         friends.add(id);

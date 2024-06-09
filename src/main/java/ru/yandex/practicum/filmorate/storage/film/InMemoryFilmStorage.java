@@ -4,6 +4,7 @@ import org.springframework.stereotype.Component;
 import ru.yandex.practicum.filmorate.exceptions.ValidationException;
 import ru.yandex.practicum.filmorate.model.Film;
 import java.time.LocalDate;
+import java.util.Collection;
 import java.util.List;
 import java.util.HashMap;
 import java.util.Map;
@@ -68,6 +69,12 @@ public class InMemoryFilmStorage implements FilmStorage {
 
     public List<Film> getFilms() {
         return films.values().stream().toList();
+    }
+
+    public List<Film> getMostPopularFilms(int count) {
+        return films.values().stream().sorted((Film film1, Film film2) -> {
+            return film1.getLike() - film2.getLike();
+        }).limit(count).toList();
     }
 
     private long getNextId() {

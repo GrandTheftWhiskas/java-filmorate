@@ -1,7 +1,6 @@
 package ru.yandex.practicum.filmorate.storage.user;
 
 import org.springframework.stereotype.Component;
-import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.filmorate.exceptions.ValidationException;
 import ru.yandex.practicum.filmorate.model.User;
 import java.time.LocalDate;
@@ -59,13 +58,11 @@ public class InMemoryUserStorage implements UserStorage {
 
     }
 
-    @DeleteMapping
-    public void delUser(@RequestBody User user) {
+    public void delUser(User user) {
         users.remove(user.getId());
     }
 
-    @GetMapping("/users/{id}")
-    public User getUser(@PathVariable long id) {
+    public User getUser(long id) {
         return users.get(id);
     }
 
