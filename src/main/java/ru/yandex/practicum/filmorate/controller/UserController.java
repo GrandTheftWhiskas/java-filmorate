@@ -1,33 +1,32 @@
 package ru.yandex.practicum.filmorate.controller;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.service.UserService;
-import ru.yandex.practicum.filmorate.storage.user.InMemoryUserStorage;
 import java.util.List;
 
 
 @RestController
 @RequestMapping("/users")
+@Slf4j
 public class UserController {
     UserService userService;
-    InMemoryUserStorage userStorage;
 
     @Autowired
-    public UserController(UserService userService, InMemoryUserStorage userStorage) {
+    public UserController(UserService userService) {
         this.userService = userService;
-        this.userStorage = userStorage;
     }
 
     @PostMapping
     public User postUser(@RequestBody User user) {
-        return userStorage.postUser(user);
+        return userService.postUser(user);
     }
 
     @PutMapping
     public User putUser(@RequestBody User user) {
-        return userStorage.putUser(user);
+        return userService.putUser(user);
     }
 
     @PutMapping("/{id}/friends/{friendId}")
@@ -42,7 +41,7 @@ public class UserController {
 
     @GetMapping
     public List<User> getUsers() {
-        return userStorage.getUsers();
+        return userService.getUsers();
     }
 
     @GetMapping("/{id}/friends")
@@ -51,7 +50,7 @@ public class UserController {
     }
 
     @GetMapping("/{id}/friends/common/{otherId}")
-    public List<User> getMutualFriends(@RequestBody @PathVariable long id, @PathVariable long otherId) {
+    public List<User> getMutualFriends(@PathVariable long id, @PathVariable long otherId) {
         return userService.getMutualFriends(id, otherId);
     }
 }

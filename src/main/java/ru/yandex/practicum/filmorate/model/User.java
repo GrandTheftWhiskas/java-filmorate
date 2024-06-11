@@ -7,20 +7,15 @@ import java.time.LocalDate;
 import java.util.HashSet;
 import java.util.Set;
 
-@Getter
-@EqualsAndHashCode
-@ToString
-@RequiredArgsConstructor
+@Data
 @Valid
 public class User {
     private Set<Long> friends = new HashSet<>();
-    @Setter
     private long id;
     @NotBlank
     private final String email;
     @NotBlank
     private final String login;
-    @Setter
     private String name;
     private final LocalDate birthday;
 

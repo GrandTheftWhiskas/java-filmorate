@@ -1,54 +1,53 @@
 package ru.yandex.practicum.filmorate.controller;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.service.FilmService;
-import ru.yandex.practicum.filmorate.storage.film.FilmStorage;
 import java.util.Collection;
 
 
 @RestController
 @RequestMapping("/films")
+@Slf4j
 public class FilmController {
-   private FilmService filmService;
-   private FilmStorage filmStorage;
+   private final FilmService filmService;
 
     @Autowired
-    public FilmController(FilmService filmService, FilmStorage filmStorage) {
+    public FilmController(FilmService filmService) {
         this.filmService = filmService;
-        this.filmStorage = filmStorage;
     }
 
     @PostMapping
     public Film postFilm(@RequestBody Film film) {
-        return filmStorage.postFilm(film);
+        return filmService.postFilm(film);
     }
 
     @PutMapping
     public Film putFilm(@RequestBody Film film) {
-        return filmStorage.putFilm(film);
+        return filmService.putFilm(film);
     }
 
     @PutMapping("/{id}/like/{userId}")
-    public Film addLike(@RequestBody @PathVariable long id, @RequestBody @PathVariable long userId) {
+    public Film addLike(@PathVariable long id, @PathVariable long userId) {
         return filmService.addLike(id, userId);
     }
 
     @DeleteMapping("/{id}/like/{userId}")
-    public Film delLike(@RequestBody @PathVariable long id, @RequestBody @PathVariable long userId) {
+    public Film delLike(@PathVariable long id, @PathVariable long userId) {
         return filmService.delLike(id, userId);
     }
 
     @GetMapping
     public Collection<Film> getFilms() {
-        return filmStorage.getFilms();
+        return filmService.getFilms();
     }
 
     @GetMapping("/popular")
     @ResponseStatus(HttpStatus.OK)
     public Collection<Film> getMostPopularFilms(@RequestParam(defaultValue = "10") int count) {
-        return filmStorage.getMostPopularFilms(count);
+        return filmService.getMostPopularFilms(count);
     }
 }

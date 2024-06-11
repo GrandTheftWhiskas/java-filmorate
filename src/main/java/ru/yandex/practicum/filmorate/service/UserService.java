@@ -2,8 +2,11 @@ package ru.yandex.practicum.filmorate.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import ru.yandex.practicum.filmorate.exceptions.NotFoundException;
+import ru.yandex.practicum.filmorate.exceptions.ValidationException;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.storage.user.UserStorage;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -11,7 +14,7 @@ import java.util.Set;
 
 @Service
 public class UserService {
-    private UserStorage userStorage;
+    private final UserStorage userStorage;
 
     @Autowired
     public UserService(UserStorage userStorage) {
@@ -19,30 +22,30 @@ public class UserService {
     }
 
     public List<User> addFriend(long id, long friendId) {
-        User user1 = userStorage.getUser(id);
-        User user2 = userStorage.getUser(friendId);
-        if (user1 == null) {
-            throw new NullPointerException("Пользователя не существует");
+        User user = userStorage.getUser(id);
+        User friend = userStorage.getUser(friendId);
+        if (user == null) {
+            throw new NotFoundException("Пользователя не существует");
         }
 
-        if (user2 == null) {
-            throw new NullPointerException("Друга не существует");
+        if (friend == null) {
+            throw new NotFoundException("Друга не существует");
         }
 
-        user1.addFriend(friendId);
-        user2.addFriend(id);
-        return Arrays.asList(user1, user2);
+        user.addFriend(friendId);
+        friend.addFriend(id);
+        return Arrays.asList(user, friend);
     }
 
     public User delFriend(long id, long friendId) {
         User user = userStorage.getUser(id);
-        User user1 = userStorage.getUser(friendId);
+        User friend = userStorage.getUser(friendId);
         if (user == null) {
-            throw new NullPointerException("Пользователя с указанным ID не существует");
+            throw new NotFoundException("Пользователя с указанным ID не существует");
         }
 
-        if (user1 == null) {
-            throw new NullPointerException("Друга с указанным ID не существует");
+        if (friend == null) {
+            throw new NotFoundException("Друга с указанным ID не существует");
         }
 
         if (!user.getFriends().contains(friendId)) {
@@ -50,7 +53,7 @@ public class UserService {
             return user;
         }
         user.delFriend(friendId);
-        user1.delFriend(id);
+        friend.delFriend(id);
         return user;
     }
 
@@ -75,5 +78,48 @@ public class UserService {
             }
         }
         return returnList;
+    }
+
+    public User postUser(User user) {
+        if (user.getEmail().isBlank() || !user.getEmail().contains("@")) {
+            throw new ValidationException("Электронная почта не может быть пустой и должна содержать символ @");
+        }
+
+        if (user.getLogin().isBlank() || user.getLogin().contains(" ")) {
+            throw new ValidationException("Логин не может быть пустым и содержать пробелы");
+        }
+
+        if (user.getName() == null || user.getName().isBlank()) {
+            user.setName(user.getLogin());
+        }
+
+        if (user.getBirthday().isAfter(LocalDate.now())) {
+            throw new ValidationException("Дата рождения не может быть в будущем");
+        }
+        return userStorage.postUser(user);
+    }
+
+    public User putUser(User user) {
+        if (user.getEmail().isBlank() || !user.getEmail().contains("@")) {
+            throw new ValidationException("Электронная почта не может быть пустой и должна содержать символ @");
+        }
+
+        if (user.getLogin().isBlank() || user.getLogin().contains(" ")) {
+            throw new ValidationException("Логин не может быть пустым и содержать пробелы");
+        }
+
+        if (user.getName() == null || user.getName().isBlank()) {
+            user.setName(user.getLogin());
+        }
+
+        if (user.getBirthday().isAfter(LocalDate.now())) {
+            throw new ValidationException("Дата рождения не может быть в будущем");
+        }
+
+        return userStorage.putUser(user);
+    }
+
+    public List<User> getUsers() {
+        return userStorage.getUsers();
     }
 }
