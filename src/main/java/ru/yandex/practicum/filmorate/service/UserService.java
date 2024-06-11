@@ -61,7 +61,7 @@ public class UserService {
         List<User> returnList = new ArrayList<>();
         User user = userStorage.getUser(id);
         if (user == null) {
-            throw new NullPointerException("Пользователя с указанным ID не существует");
+            throw new NotFoundException("Пользователя с указанным ID не существует");
         }
         for (long userId : user.getFriends()) {
             returnList.add(userStorage.getUser(userId));
