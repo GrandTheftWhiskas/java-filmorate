@@ -1,5 +1,6 @@
 package ru.yandex.practicum.filmorate.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import lombok.*;
@@ -10,6 +11,7 @@ import java.util.Set;
 @Data
 @Valid
 public class User {
+    @JsonIgnore
     private Set<Long> friends = new HashSet<>();
     private long id;
     @NotBlank

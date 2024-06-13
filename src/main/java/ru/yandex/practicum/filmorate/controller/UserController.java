@@ -12,7 +12,7 @@ import java.util.List;
 @RequestMapping("/users")
 @Slf4j
 public class UserController {
-    UserService userService;
+    private final UserService userService;
 
     @Autowired
     public UserController(UserService userService) {
@@ -21,11 +21,13 @@ public class UserController {
 
     @PostMapping
     public User postUser(@RequestBody User user) {
+        log.info("Добавление пользователя...");
         return userService.postUser(user);
     }
 
     @PutMapping
     public User putUser(@RequestBody User user) {
+        log.info("Обновление пользователя...");
         return userService.putUser(user);
     }
 
@@ -51,6 +53,7 @@ public class UserController {
 
     @GetMapping("/{id}/friends/common/{otherId}")
     public List<User> getMutualFriends(@PathVariable long id, @PathVariable long otherId) {
+        log.info("Поиск общих друзей...");
         return userService.getMutualFriends(id, otherId);
     }
 }

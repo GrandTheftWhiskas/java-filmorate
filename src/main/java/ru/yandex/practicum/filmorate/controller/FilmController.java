@@ -22,11 +22,13 @@ public class FilmController {
 
     @PostMapping
     public Film postFilm(@RequestBody Film film) {
+        log.info("Добавление фильма...");
         return filmService.postFilm(film);
     }
 
     @PutMapping
     public Film putFilm(@RequestBody Film film) {
+        log.info("Обновление фильма...");
         return filmService.putFilm(film);
     }
 
@@ -48,6 +50,7 @@ public class FilmController {
     @GetMapping("/popular")
     @ResponseStatus(HttpStatus.OK)
     public Collection<Film> getMostPopularFilms(@RequestParam(defaultValue = "10") int count) {
+        log.info("Поиск популярных фильмов...");
         return filmService.getMostPopularFilms(count);
     }
 }

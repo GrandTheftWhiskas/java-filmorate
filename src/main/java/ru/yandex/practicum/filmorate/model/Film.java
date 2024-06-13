@@ -1,4 +1,5 @@
 package ru.yandex.practicum.filmorate.model;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.NotBlank;
@@ -14,6 +15,7 @@ import java.util.Set;
 @RequiredArgsConstructor
 @Valid
 public class Film {
+    @JsonIgnore
     private Set<Long> likes = new HashSet<>();
     @Setter
     private long id;
