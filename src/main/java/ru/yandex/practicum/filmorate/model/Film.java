@@ -23,6 +23,8 @@ public class Film {
     private final String name;
     @Max(200)
     private final String description;
+    private final String genre;
+    private final Rating rating;
     private final LocalDate releaseDate;
     private final Duration duration;
 
