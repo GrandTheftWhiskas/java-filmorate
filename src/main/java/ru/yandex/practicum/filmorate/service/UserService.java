@@ -5,6 +5,7 @@ import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.exceptions.NotFoundException;
 import ru.yandex.practicum.filmorate.exceptions.ValidationException;
 import ru.yandex.practicum.filmorate.model.User;
+import ru.yandex.practicum.filmorate.storage.user.UserDbStorage;
 import ru.yandex.practicum.filmorate.storage.user.UserStorage;
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -15,10 +16,12 @@ import java.util.Set;
 @Service
 public class UserService {
     private final UserStorage userStorage;
+    private final UserDbStorage userDbStorage;
 
     @Autowired
-    public UserService(UserStorage userStorage) {
+    public UserService(UserStorage userStorage, UserDbStorage userDbStorage) {
         this.userStorage = userStorage;
+        this.userDbStorage = userDbStorage;
     }
 
     public List<User> addFriend(long id, long friendId) {
@@ -31,9 +34,7 @@ public class UserService {
         if (friend == null) {
             throw new NotFoundException("Друга не существует");
         }
-
-        user.addFriend(friendId);
-        friend.addFriend(id);
+            user.addFriend(friendId);
         return Arrays.asList(user, friend);
     }
 
@@ -54,6 +55,7 @@ public class UserService {
         }
         user.delFriend(friendId);
         friend.delFriend(id);
+        userDbStorage.delFriend(id, friendId);
         return user;
     }
 
@@ -66,6 +68,7 @@ public class UserService {
         for (long userId : user.getFriends()) {
             returnList.add(userStorage.getUser(userId));
         }
+        userDbStorage.getFriends(id);
         return returnList;
     }
 
@@ -77,6 +80,7 @@ public class UserService {
                 returnList.add(userStorage.getUser(friendId));
             }
         }
+        userDbStorage.getMutualFriends(id, otherId);
         return returnList;
     }
 

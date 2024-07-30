@@ -1,5 +1,5 @@
 # База данных
-![____](https://github.com/GrandTheftWhiskas/java-filmorate/tree/add-database/src/resources/schema.png)
+![____](https://github.com/GrandTheftWhiskas/java-filmorate/tree/add-database/src/resources/database.png)
 
 ## Таблицы и их поля:
 

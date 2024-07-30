@@ -3,10 +3,13 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.*;
 import java.time.Duration;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 @Getter
@@ -23,8 +26,10 @@ public class Film {
     private final String name;
     @Max(200)
     private final String description;
-    private final String genre;
-    private final Rating rating;
+    @Setter
+    private List<Genre> genres;
+    @Setter
+    private MPA mpa;
     private final LocalDate releaseDate;
     private final Duration duration;
 

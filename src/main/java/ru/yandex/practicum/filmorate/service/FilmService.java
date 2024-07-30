@@ -6,24 +6,31 @@ import org.springframework.web.bind.annotation.RequestParam;
 import ru.yandex.practicum.filmorate.exceptions.NotFoundException;
 import ru.yandex.practicum.filmorate.exceptions.ValidationException;
 import ru.yandex.practicum.filmorate.model.*;
+import ru.yandex.practicum.filmorate.storage.film.FilmDbStorage;
 import ru.yandex.practicum.filmorate.storage.film.FilmStorage;
+import ru.yandex.practicum.filmorate.storage.film.InMemoryFilmStorage;
+import ru.yandex.practicum.filmorate.storage.user.UserDbStorage;
 import ru.yandex.practicum.filmorate.storage.user.UserStorage;
 import java.time.LocalDate;
 import java.util.Collection;
+import java.util.List;
+import java.util.Set;
 
 import static java.time.Month.DECEMBER;
 
 @Service
 public class FilmService {
+    private final FilmDbStorage filmDbStorage;
     private final FilmStorage filmStorage;
     private final UserStorage userStorage;
     private static final int MAX_SYMBOLS = 200;
     private static final LocalDate MOVIE_BIRTHDAY = LocalDate.of(1895, DECEMBER, 28);
 
     @Autowired
-    public FilmService(FilmStorage filmStorage, UserStorage  userStorage) {
+    public FilmService(FilmStorage filmStorage, UserStorage  userStorage, FilmDbStorage filmDbStorage) {
         this.filmStorage = filmStorage;
         this.userStorage = userStorage;
+        this.filmDbStorage = filmDbStorage;
     }
 
     public Film addLike(long id, long userId) {
@@ -37,6 +44,7 @@ public class FilmService {
             throw new NotFoundException("Такого пользователя не существует");
         }
         film.like(userId);
+        filmDbStorage.addLike(id, userId);
         return film;
     }
 
@@ -51,6 +59,7 @@ public class FilmService {
             throw new NotFoundException("Такого пользователя не существует");
         }
         film.delLike(userId);
+        filmDbStorage.delLike(id, userId);
         return film;
     }
 
@@ -70,6 +79,10 @@ public class FilmService {
         if (film.getReleaseDate().isBefore(MOVIE_BIRTHDAY)) {
             throw new ValidationException("Указана неверная дата");
         }
+
+        if (film.getMpa().getId() >= 10) {
+            throw new ValidationException("Указан неверный рейтинг");
+        }
         return filmStorage.postFilm(film);
     }
 
@@ -88,8 +101,24 @@ public class FilmService {
         return filmStorage.putFilm(film);
     }
 
+    public Film getFilm(long id) {
+        return filmStorage.getFilm(id);
+    }
+
     public Collection<Film> getFilms() {
         return filmStorage.getFilms();
+    }
+
+    public Genre getGenre(long id) {
+        return filmStorage.getGenre(id);
+    }
+
+    public List<Genre> getGenres() {
+        return filmStorage.getGenres();
+    }
+
+    public MPA getMpa(long id) {
+       return filmStorage.getMpa(id);
     }
 
     public Collection<Film> getMostPopularFilms(@RequestParam(defaultValue = "10") int count) {
