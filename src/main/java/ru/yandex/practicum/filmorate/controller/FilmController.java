@@ -49,6 +49,7 @@ public class FilmController {
     public Film getFilm(@PathVariable long id) {
         return filmService.getFilm(id);
     }
+
     @GetMapping("/films")
     public Collection<Film> getFilms() {
         return filmService.getFilms();
