@@ -16,14 +16,15 @@ public class UserDbStorage {
         this.jdbcTemplate = jdbcTemplate;
     }
 
-    public void postUser(User user) {
+    public User postUser(User user) {
         String request = "INSERT INTO users(name, email, login, birthday) " + "values(?, ?, ?, ?)";
         jdbcTemplate.update(request, user.getName(), user.getEmail(), user.getLogin(),
                 Date.valueOf(user.getBirthday()));
         System.out.println("Пользователь добавлен в базу данных");
+        return user;
     }
 
-    public void putUser(User user) {
+    public User putUser(User user) {
         String request = "UPDATE users SET " + "name = ?, email = ?, login = ?, birthday = ?" + "WHERE id = ?";
         int result = jdbcTemplate.update(request, user.getEmail(), user.getLogin(),
                 user.getName(), user.getBirthday(), user.getId());
@@ -32,6 +33,7 @@ public class UserDbStorage {
         } else {
             System.out.println("Запись обновлена в базе данных");
         }
+        return user;
     }
 
     public void delUser(User user) {
@@ -45,9 +47,9 @@ public class UserDbStorage {
         return jdbcTemplate.queryForObject(request, new UserRowMapper(), id);
     }
 
-    public void getUsers() {
+    public List<User> getUsers() {
         String request = "SELECT * FROM users";
-        jdbcTemplate.query(request, new UserRowMapper());
+        return jdbcTemplate.query(request, new UserRowMapper());
     }
 
     public void addFriend(long userId, long friendId) {
