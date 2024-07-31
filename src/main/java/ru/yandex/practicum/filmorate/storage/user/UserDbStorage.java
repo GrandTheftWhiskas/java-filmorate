@@ -1,25 +1,16 @@
 package ru.yandex.practicum.filmorate.storage.user;
 
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.core.RowMapper;
 import ru.yandex.practicum.filmorate.model.*;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
-import ru.yandex.practicum.filmorate.service.UserService;
-
-
 import java.sql.Date;
 import java.util.List;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.time.ZoneId;
 
 @Component
 @Qualifier("userDbStorage")
 public class UserDbStorage {
     private JdbcTemplate jdbcTemplate;
-    private InMemoryUserStorage inMemoryUserStorage;
-    private UserService userService;
 
     public UserDbStorage(JdbcTemplate jdbcTemplate) {
         this.jdbcTemplate = jdbcTemplate;
@@ -43,7 +34,6 @@ public class UserDbStorage {
     }
 
     public void delUser (User user) {
-        inMemoryUserStorage.delUser(user);
         String request = "DELETE FROM users WHERE id = ?";
         jdbcTemplate.update(request, user.getId());
         System.out.println("Запись успешно удалена из базы данных");

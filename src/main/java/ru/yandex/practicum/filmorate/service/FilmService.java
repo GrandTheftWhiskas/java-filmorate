@@ -8,13 +8,10 @@ import ru.yandex.practicum.filmorate.exceptions.ValidationException;
 import ru.yandex.practicum.filmorate.model.*;
 import ru.yandex.practicum.filmorate.storage.film.FilmDbStorage;
 import ru.yandex.practicum.filmorate.storage.film.FilmStorage;
-import ru.yandex.practicum.filmorate.storage.film.InMemoryFilmStorage;
-import ru.yandex.practicum.filmorate.storage.user.UserDbStorage;
 import ru.yandex.practicum.filmorate.storage.user.UserStorage;
 import java.time.LocalDate;
 import java.util.Collection;
 import java.util.List;
-import java.util.Set;
 
 import static java.time.Month.DECEMBER;
 
@@ -119,6 +116,10 @@ public class FilmService {
 
     public MPA getMpa(long id) {
        return filmStorage.getMpa(id);
+    }
+
+    public List<MPA> getAllMpa() {
+        return filmStorage.getAllMpa();
     }
 
     public Collection<Film> getMostPopularFilms(@RequestParam(defaultValue = "10") int count) {

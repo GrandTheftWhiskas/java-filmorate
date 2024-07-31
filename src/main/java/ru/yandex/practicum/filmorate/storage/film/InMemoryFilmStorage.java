@@ -59,7 +59,7 @@ public class InMemoryFilmStorage implements FilmStorage {
     }
 
     public List<MPA> getAllMpa() {
-        return null;
+        return filmDbStorage.getAllMpa();
     }
 
     public List<Film> getMostPopularFilms(int count) {

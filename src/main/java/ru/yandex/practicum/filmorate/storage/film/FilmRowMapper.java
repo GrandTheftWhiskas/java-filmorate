@@ -8,9 +8,7 @@ import ru.yandex.practicum.filmorate.model.MPA;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.Duration;
-import java.time.ZoneId;
 import java.util.List;
-import java.util.Set;
 public class FilmRowMapper implements RowMapper<Film> {
     @Override
     public Film mapRow(ResultSet resultSet, int rowNum) throws SQLException {

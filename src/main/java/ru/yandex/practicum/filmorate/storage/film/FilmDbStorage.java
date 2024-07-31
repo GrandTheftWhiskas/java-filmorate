@@ -1,51 +1,44 @@
 package ru.yandex.practicum.filmorate.storage.film;
 
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Component;
 import ru.yandex.practicum.filmorate.exceptions.NotFoundException;
 import ru.yandex.practicum.filmorate.exceptions.ValidationException;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.Genre;
 import ru.yandex.practicum.filmorate.model.MPA;
-import ru.yandex.practicum.filmorate.model.User;
-import ru.yandex.practicum.filmorate.service.FilmService;
-
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.time.Duration;
-import java.time.ZoneId;
 import java.sql.Date;
-import java.util.Collection;
-import java.util.Optional;
-import java.util.Set;
-import java.util.List;
+import java.util.*;
 
 @Component
 @Qualifier("filmDbStorage")
 public class FilmDbStorage {
     private JdbcTemplate jdbcTemplate;
-    private InMemoryFilmStorage inMemoryFilmStorage;
-    private FilmService filmService;
 
     public FilmDbStorage(JdbcTemplate jdbcTemplate) {
         this.jdbcTemplate = jdbcTemplate;
     }
 
     public Film postFilm(Film film) {
+        int number = 0;
         String request = "INSERT INTO films(name, description, release_date, duration) "
                 + "values(?, ?, ?, ?)";
         String request1 = "INSERT INTO genres(film_id, genre_id) " + "values(?, ?)";
         String request2 = "INSERT INTO film_mpa(film_id, mpa_id) " + "values(?, ?)";
         int result = jdbcTemplate.update(request, film.getName(), film.getDescription(),
                 Date.valueOf(film.getReleaseDate()), film.getDuration());
-        for (Genre genre : film.getGenres()) {
-            if (genre.getId() > 50) {
-                throw new ValidationException("Указан неверный идентификатор жанра");
+        if (film.getGenres() != null) {
+            for (Genre genre : film.getGenres()) {
+                if (genre.getId() > 50) {
+                    throw new ValidationException("Указан неверный идентификатор жанра");
+                } else if (genre.getId() < number) {
+                    break;
+                }
+                jdbcTemplate.update(request1, film.getId(), genre.getId());
+                number++;
+                System.out.println("Жанр добавлен");
             }
-            jdbcTemplate.update(request1, film.getId(), genre.getId());
         }
         jdbcTemplate.update(request2, film.getId(), film.getMpa().getId());
         if (result != 0) {
@@ -70,7 +63,6 @@ public class FilmDbStorage {
     }
 
     public void delFilm(Film film) {
-        inMemoryFilmStorage.delFilm(film);
         String request = "DELETE FROM films WHERE id = ?";
         String request1 = "DELETE FROM genres WHERE film_id = ?";
         String request2 = "DELETE FROM mpa WHERE film_id = ?";
@@ -90,11 +82,8 @@ public class FilmDbStorage {
                     "INNER JOIN mpa AS m ON fm.mpa_id = m.id " +
                     "WHERE fm.film_id = ?";
             Film film = jdbcTemplate.queryForObject(request, new FilmRowMapper(), id);
-            List<Genre> genres = jdbcTemplate.query(request1, new GenreRowMapper(), id);
-            film.setGenres(genres);
-            List<MPA> mpa = jdbcTemplate.query(request2, new MpaRowMapper(), id);
-            System.out.println(mpa);
-            film.setMpa(mpa.get(0));
+            film.setGenres(jdbcTemplate.query(request1, new GenreRowMapper(), id));
+            film.setMpa(jdbcTemplate.queryForObject(request2, new MpaRowMapper(), id));
             return film;
     }
 
@@ -120,6 +109,9 @@ public class FilmDbStorage {
 
     public Genre getGenre(long id) {
         String request = "SELECT * FROM genre WHERE id = ?";
+        if (id > 50) {
+            throw new NotFoundException("Жанр не найден");
+        }
         return jdbcTemplate.queryForObject(request, new GenreRowMapper(), id);
     }
 
@@ -129,12 +121,21 @@ public class FilmDbStorage {
         if (genres.isEmpty()) {
             throw new NotFoundException("Жанры не найдены");
         }
+        System.out.println("Получение жанров");
         return genres;
     }
 
     public MPA getMpa(long id) {
         String request = "SELECT * FROM mpa WHERE id = ?";
+        if (id > 50) {
+            throw new NotFoundException("Рейтинг не найден");
+        }
         return jdbcTemplate.queryForObject(request, new MpaRowMapper(), id);
+    }
+
+    public List<MPA> getAllMpa() {
+        String request = "SELECT * FROM mpa";
+        return jdbcTemplate.query(request, new MpaRowMapper());
     }
 
     public List<Film> getMostPopularFilms(int count) {
