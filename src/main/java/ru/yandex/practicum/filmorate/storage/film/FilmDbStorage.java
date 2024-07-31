@@ -94,16 +94,16 @@ public class FilmDbStorage {
         return jdbcTemplate.query(request, new FilmRowMapper());
     }
 
-    public void addLike(long id, long user_id) {
+    public void addLike(long id, long userId) {
         String request = "INSERT INTO likes(film_id, user_id) " +
                 "values(?, ?)";
-        jdbcTemplate.update(request, id, user_id);
+        jdbcTemplate.update(request, id, userId);
         System.out.println("Лайк был добавлен в базу данных");
     }
 
-    public void delLike(long id, long user_id) {
+    public void delLike(long id, long userId) {
         String request = "DELETE FROM likes WHERE film_id = ? AND user_id = ?";
-        jdbcTemplate.update(request, id, user_id);
+        jdbcTemplate.update(request, id, userId);
         System.out.println("Лайк был удален из базы данных");
     }
 
