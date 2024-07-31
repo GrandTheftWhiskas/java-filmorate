@@ -15,6 +15,7 @@ public class UserDbStorage {
     public UserDbStorage(JdbcTemplate jdbcTemplate) {
         this.jdbcTemplate = jdbcTemplate;
     }
+
     public void postUser(User user) {
         String request = "INSERT INTO users(name, email, login, birthday) " + "values(?, ?, ?, ?)";
         jdbcTemplate.update(request, user.getName(), user.getEmail(), user.getLogin(),
@@ -33,7 +34,7 @@ public class UserDbStorage {
         }
     }
 
-    public void delUser (User user) {
+    public void delUser(User user) {
         String request = "DELETE FROM users WHERE id = ?";
         jdbcTemplate.update(request, user.getId());
         System.out.println("Запись успешно удалена из базы данных");
@@ -49,23 +50,23 @@ public class UserDbStorage {
         jdbcTemplate.query(request, new UserRowMapper());
     }
 
-    public void addFriend(long user_id, long friend_id) {
+    public void addFriend(long userId, long friendId) {
         String request = "INSERT INTO friends(user_id, friend_id, status) " + "values(?, ?, ?)";
-        if (getUser(friend_id).getFriends().contains(user_id)) {
-            jdbcTemplate.update(request, user_id, friend_id, "confirmed");
+        if (getUser(friendId).getFriends().contains(userId)) {
+            jdbcTemplate.update(request, userId, friendId, "confirmed");
             jdbcTemplate.update("UPDATE friends SET friend_id = ?, id = ?, status = ?",
-                    friend_id, user_id, "confirmed");
+                    friendId, userId, "confirmed");
             System.out.println("Друг успешно добавлен. Дружба подтвержденная");
         } else {
-            jdbcTemplate.update(request, user_id, friend_id, "unconfirmed");
+            jdbcTemplate.update(request, userId, friendId, "unconfirmed");
             System.out.println("Друг успешно добавлен. Дружба неподтвержденная");
         }
     }
 
-    public void delFriend(long user_id, long friend_id) {
+    public void delFriend(long userId, long friendId) {
             String request = "DELETE FROM friends WHERE user_id = ? AND friend_id = ?";
-            jdbcTemplate.update(request, user_id, friend_id);
-            jdbcTemplate.update(request, friend_id, user_id);
+            jdbcTemplate.update(request, userId, friendId);
+            jdbcTemplate.update(request, friendId, userId);
             System.out.println("Пользователь удален из друзей");
     }
 
