@@ -74,6 +74,9 @@ public class UserDbStorage {
     }
 
     public User delFriend(long userId, long friendId) {
+        if (getFriends(friendId).contains(userId)) {
+            throw new NotFoundException("Пользователь не был добавлен в друзья");
+        }
         User user = getUser(userId);
         String request = "DELETE FROM friends WHERE user_id = ? AND friend_id = ?";
         jdbcTemplate.update(request, userId, friendId);
