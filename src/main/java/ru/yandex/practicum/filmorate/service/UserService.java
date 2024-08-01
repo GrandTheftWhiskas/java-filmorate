@@ -25,63 +25,19 @@ public class UserService {
     }
 
     public List<User> addFriend(long id, long friendId) {
-        User user = userStorage.getUser(id);
-        User friend = userStorage.getUser(friendId);
-        if (user == null) {
-            throw new NotFoundException("Пользователя не существует");
-        }
-
-        if (friend == null) {
-            throw new NotFoundException("Друга не существует");
-        }
-            user.addFriend(friendId);
-        return Arrays.asList(user, friend);
+        return userDbStorage.addFriend(id, friendId);
     }
 
     public User delFriend(long id, long friendId) {
-        User user = userStorage.getUser(id);
-        User friend = userStorage.getUser(friendId);
-        if (user == null) {
-            throw new NotFoundException("Пользователя с указанным ID не существует");
-        }
-
-        if (friend == null) {
-            throw new NotFoundException("Друга с указанным ID не существует");
-        }
-
-        if (!user.getFriends().contains(friendId)) {
-            System.out.println("Пользователь не был добавлен в друзья");
-            return user;
-        }
-        user.delFriend(friendId);
-        friend.delFriend(id);
-        userDbStorage.delFriend(id, friendId);
-        return user;
+        return userDbStorage.delFriend(id, friendId);
     }
 
     public List<User> getFriends(long id) {
-        List<User> returnList = new ArrayList<>();
-        User user = userStorage.getUser(id);
-        if (user == null) {
-            throw new NotFoundException("Пользователя с указанным ID не существует");
-        }
-        for (long userId : user.getFriends()) {
-            returnList.add(userStorage.getUser(userId));
-        }
-        userDbStorage.getFriends(id);
-        return returnList;
+        return userDbStorage.getFriends(id);
     }
 
     public List<User> getMutualFriends(long id, long otherId) {
-        Set<Long> list1 = userStorage.getUser(id).getFriends();
-        List<User> returnList = new ArrayList<>();
-        for (long friendId : userStorage.getUser(otherId).getFriends()) {
-            if (!list1.add(friendId)) {
-                returnList.add(userStorage.getUser(friendId));
-            }
-        }
-        userDbStorage.getMutualFriends(id, otherId);
-        return returnList;
+        return userDbStorage.getMutualFriends(id, otherId);
     }
 
     public User postUser(User user) {

@@ -18,21 +18,11 @@ public class InMemoryUserStorage implements UserStorage {
 
 
     public User postUser(User user) {
-        user.setId(getNextId());
-        users.put(user.getId(), user);
-        userDbStorage.postUser(user);
-        return user;
+        return userDbStorage.postUser(user);
     }
 
     public User putUser(User user) {
-        if (users.containsKey(user.getId())) {
-            users.put(user.getId(), user);
-            userDbStorage.putUser(user);
-            return user;
-        } else {
-            throw new NotFoundException("Указанного пользователя не существует");
-        }
-
+        return userDbStorage.putUser(user);
     }
 
     public void delUser(User user) {
@@ -40,12 +30,11 @@ public class InMemoryUserStorage implements UserStorage {
     }
 
     public User getUser(long id) {
-        return users.get(id);
+        return userDbStorage.getUser(id);
     }
 
     public List<User> getUsers() {
-        userDbStorage.getUsers();
-        return users.values().stream().toList();
+        return userDbStorage.getUsers();
     }
 
     private long getNextId() {

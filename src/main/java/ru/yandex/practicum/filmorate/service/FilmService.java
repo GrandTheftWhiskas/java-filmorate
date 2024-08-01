@@ -31,33 +31,11 @@ public class FilmService {
     }
 
     public Film addLike(long id, long userId) {
-        Film film = filmStorage.getFilm(id);
-        User user = userStorage.getUser(userId);
-        if (film == null) {
-            throw new NotFoundException("Такого фильма не существует");
-        }
-
-        if (user == null) {
-            throw new NotFoundException("Такого пользователя не существует");
-        }
-        film.like(userId);
-        filmDbStorage.addLike(id, userId);
-        return film;
+        return filmDbStorage.addLike(id, userId);
     }
 
     public Film delLike(long id, long userId) {
-        Film film = filmStorage.getFilm(id);
-        User user = userStorage.getUser(userId);
-        if (film == null) {
-            throw new NotFoundException("Такого фильма не существует");
-        }
-
-        if (user == null) {
-            throw new NotFoundException("Такого пользователя не существует");
-        }
-        film.delLike(userId);
-        filmDbStorage.delLike(id, userId);
-        return film;
+        return filmDbStorage.delLike(id, userId);
     }
 
     public Film postFilm(Film film) {

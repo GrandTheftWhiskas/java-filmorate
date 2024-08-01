@@ -20,18 +20,11 @@ public class InMemoryFilmStorage implements FilmStorage {
     }
 
     public Film postFilm(Film film) {
-        film.setId(getNextId());
-        films.put(film.getId(), film);
         return filmDbStorage.postFilm(film);
     }
 
     public Film putFilm(Film film) {
-        if (films.containsKey(film.getId())) {
-            films.put(film.getId(), film);
-            return filmDbStorage.putFilm(film);
-        } else {
-            throw new NotFoundException("Указанного фильма не существует");
-        }
+        return filmDbStorage.putFilm(film);
     }
 
     public void delFilm(Film film) {
@@ -65,13 +58,5 @@ public class InMemoryFilmStorage implements FilmStorage {
     public List<Film> getMostPopularFilms(int count) {
         return filmDbStorage.getMostPopularFilms(count);
 
-    }
-
-    private long getNextId() {
-        long num = films.keySet().stream()
-                .mapToLong(id -> id)
-                .max()
-                .orElse(0);
-        return ++num;
     }
 }

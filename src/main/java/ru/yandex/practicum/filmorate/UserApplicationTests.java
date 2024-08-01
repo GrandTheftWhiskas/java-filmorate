@@ -27,7 +27,7 @@ class UserApplicationTests {
 
     @BeforeEach
     void setUp() {
-        User user = new User("mail@ru", "1234", LocalDate.of(1999, 12, 18));
+        user = new User("mail@ru", "1234", LocalDate.of(1999, 12, 18));
         user.setName("name");
         userDbStorage.postUser(user);
     }
@@ -39,7 +39,7 @@ class UserApplicationTests {
         assertThat(user)
                 .isPresent()
                 .hasValueSatisfying(user1 ->
-                        assertThat(user1).hasFieldOrPropertyWithValue("id", 1)
+                        assertThat(user1).hasFieldOrPropertyWithValue("id", 1L)
                 );
     }
 
@@ -49,7 +49,7 @@ class UserApplicationTests {
         userDbStorage.putUser(user);
         User user1 = userDbStorage.putUser(user);
 
-        assertThat(user1).hasFieldOrPropertyWithValue("name", "user2");
+        assertThat(user1).hasFieldOrPropertyWithValue("name", "новое имя");
     }
 
     @Test

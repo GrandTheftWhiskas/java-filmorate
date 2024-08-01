@@ -8,13 +8,17 @@ import ru.yandex.practicum.filmorate.exceptions.ValidationException;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.Genre;
 import ru.yandex.practicum.filmorate.model.MPA;
+import ru.yandex.practicum.filmorate.model.User;
+import ru.yandex.practicum.filmorate.storage.user.UserRowMapper;
+
 import java.sql.Date;
 import java.util.*;
 
 @Component
 @Qualifier("filmDbStorage")
 public class FilmDbStorage {
-    private JdbcTemplate jdbcTemplate;
+    private final JdbcTemplate jdbcTemplate;
+    private int id = 1;
 
     public FilmDbStorage(JdbcTemplate jdbcTemplate) {
         this.jdbcTemplate = jdbcTemplate;
@@ -22,6 +26,8 @@ public class FilmDbStorage {
 
     public Film postFilm(Film film) {
         int number = 0;
+        film.setId(id);
+        id++;
         String request = "INSERT INTO films(name, description, release_date, duration) "
                 + "values(?, ?, ?, ?)";
         String request1 = "INSERT INTO genres(film_id, genre_id) " + "values(?, ?)";
@@ -55,7 +61,7 @@ public class FilmDbStorage {
         int result = jdbcTemplate.update(request, film.getName(), film.getDescription(), film.getReleaseDate(),
                 film.getDuration(), film.getId());
         if (result == 0) {
-            System.out.println("Указанного фильма нет в базе данных");
+            throw new NotFoundException("Фильма нет в базе данных");
         } else {
             System.out.println("Запись обновлена в базе данных");
         }
@@ -94,17 +100,39 @@ public class FilmDbStorage {
         return jdbcTemplate.query(request, new FilmRowMapper());
     }
 
-    public void addLike(long id, long userId) {
+    public Film addLike(long id, long userId) {
+        Film film = getFilm(id);
+        User user = jdbcTemplate.queryForObject("SELECT * FROM users WHERE id = ?", new UserRowMapper(), userId);
+        if (film == null) {
+            throw new NotFoundException("Такого фильма не существует");
+        }
+
+        if (user == null) {
+            throw new NotFoundException("Такого пользователя не существует");
+        }
+
         String request = "INSERT INTO likes(film_id, user_id) " +
                 "values(?, ?)";
         jdbcTemplate.update(request, id, userId);
         System.out.println("Лайк был добавлен в базу данных");
+        return film;
     }
 
-    public void delLike(long id, long userId) {
+    public Film delLike(long id, long userId) {
+        Film film = getFilm(id);
+        User user = jdbcTemplate.queryForObject("SELECT * FROM users WHERE id = ?", new UserRowMapper(), userId);
+        if (film == null) {
+            throw new NotFoundException("Такого фильма не существует");
+        }
+
+        if (user == null) {
+            throw new NotFoundException("Такого пользователя не существует");
+        }
+
         String request = "DELETE FROM likes WHERE film_id = ? AND user_id = ?";
         jdbcTemplate.update(request, id, userId);
         System.out.println("Лайк был удален из базы данных");
+        return film;
     }
 
     public Genre getGenre(long id) {
