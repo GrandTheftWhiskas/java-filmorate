@@ -40,6 +40,7 @@ public class FilmController {
         return filmService.addLike(id, userId);
     }
 
+
     @DeleteMapping("/films/{id}/like/{userId}")
     public Film delLike(@PathVariable long id, @PathVariable long userId) {
         return filmService.delLike(id, userId);
@@ -55,6 +56,7 @@ public class FilmController {
         return filmService.getFilms();
     }
 
+
     @GetMapping("/genres/{id}")
     public Genre getGenre(@PathVariable long id) {
         return filmService.getGenre(id);
@@ -64,6 +66,7 @@ public class FilmController {
     public List<Genre> getGenres() {
         return filmService.getGenres();
     }
+
 
     @GetMapping("/mpa/{id}")
     public MPA getMpa(@PathVariable long id) {

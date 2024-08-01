@@ -1,14 +1,11 @@
 package ru.yandex.practicum.filmorate.model;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.NotBlank;
 import lombok.*;
 import java.time.Duration;
 import java.time.LocalDate;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 @Getter
 @EqualsAndHashCode
@@ -16,8 +13,6 @@ import java.util.Set;
 @RequiredArgsConstructor
 @Valid
 public class Film {
-    @JsonIgnore
-    private Set<Long> likes = new HashSet<>();
     @Setter
     private long id;
     @NotBlank
@@ -35,15 +30,4 @@ public class Film {
         return (int) duration.toSeconds();
     }
 
-    public void like(long id) {
-        likes.add(id);
-    }
-
-    public void delLike(long id) {
-        likes.remove(id);
-    }
-
-    public int getLike() {
-        return likes.size();
-    }
 }

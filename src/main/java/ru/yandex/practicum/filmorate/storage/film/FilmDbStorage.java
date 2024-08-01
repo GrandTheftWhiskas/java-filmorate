@@ -8,8 +8,6 @@ import ru.yandex.practicum.filmorate.exceptions.ValidationException;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.Genre;
 import ru.yandex.practicum.filmorate.model.MPA;
-import ru.yandex.practicum.filmorate.model.User;
-import ru.yandex.practicum.filmorate.storage.user.UserRowMapper;
 
 import java.sql.Date;
 import java.util.*;
@@ -30,7 +28,7 @@ public class FilmDbStorage {
         id++;
         String request = "INSERT INTO films(name, description, release_date, duration) "
                 + "values(?, ?, ?, ?)";
-        String request1 = "INSERT INTO genres(film_id, genre_id) " + "values(?, ?)";
+        String request1 = "INSERT INTO film_genres(film_id, genre_id) " + "values(?, ?)";
         String request2 = "INSERT INTO film_mpa(film_id, mpa_id) " + "values(?, ?)";
         int result = jdbcTemplate.update(request, film.getName(), film.getDescription(),
                 Date.valueOf(film.getReleaseDate()), film.getDuration());
@@ -43,15 +41,9 @@ public class FilmDbStorage {
                 }
                 jdbcTemplate.update(request1, film.getId(), genre.getId());
                 number++;
-                System.out.println("Жанр добавлен");
             }
         }
         jdbcTemplate.update(request2, film.getId(), film.getMpa().getId());
-        if (result != 0) {
-            System.out.println("Фильм добавлен в базу данных");
-        } else {
-            System.out.println("Произошла ошибка при добавлении фильма в базу данных");
-        }
         return film;
     }
 
@@ -62,27 +54,25 @@ public class FilmDbStorage {
                 film.getDuration(), film.getId());
         if (result == 0) {
             throw new NotFoundException("Фильма нет в базе данных");
-        } else {
-            System.out.println("Запись обновлена в базе данных");
         }
+
         return film;
     }
 
     public void delFilm(Film film) {
         String request = "DELETE FROM films WHERE id = ?";
-        String request1 = "DELETE FROM genres WHERE film_id = ?";
-        String request2 = "DELETE FROM mpa WHERE film_id = ?";
+        String request1 = "DELETE FROM film_genres WHERE film_id = ?";
+        String request2 = "DELETE FROM film_mpa WHERE film_id = ?";
         jdbcTemplate.update(request, film.getId());
         jdbcTemplate.update(request1, film.getId());
         jdbcTemplate.update(request2, film.getId());
-        System.out.println("Запись удалена из базы данных");
     }
 
     public Film getFilm(long id) {
             String request = "SELECT * FROM films " +
                     "WHERE id = ?";
-            String request1 = "SELECT gen.id, gen.name FROM genres AS g " +
-                    "INNER JOIN genre AS gen ON g.genre_id = gen.id " +
+            String request1 = "SELECT gen.id, gen.name FROM film_genres AS g " +
+                    "INNER JOIN genres AS gen ON g.genre_id = gen.id " +
                     "WHERE g.film_id = ?";
             String request2 = "SELECT m.id, m.name FROM film_mpa AS fm " +
                     "INNER JOIN mpa AS m ON fm.mpa_id = m.id " +
@@ -95,40 +85,21 @@ public class FilmDbStorage {
 
     public List<Film> getFilms() {
         String request = "SELECT f.*, g.genre_id FROM films AS f " +
-                "INNER JOIN genres AS g ON f.id = g.film_id " +
+                "INNER JOIN film_genres AS g ON f.id = g.film_id " +
                 "INNER JOIN film_mpa AS m ON f.id = m.film_id";
         return jdbcTemplate.query(request, new FilmRowMapper());
     }
 
     public Film addLike(long id, long userId) {
         Film film = getFilm(id);
-        User user = jdbcTemplate.queryForObject("SELECT * FROM users WHERE id = ?", new UserRowMapper(), userId);
-        if (film == null) {
-            throw new NotFoundException("Такого фильма не существует");
-        }
-
-        if (user == null) {
-            throw new NotFoundException("Такого пользователя не существует");
-        }
-
         String request = "INSERT INTO likes(film_id, user_id) " +
                 "values(?, ?)";
         jdbcTemplate.update(request, id, userId);
-        System.out.println("Лайк был добавлен в базу данных");
         return film;
     }
 
     public Film delLike(long id, long userId) {
         Film film = getFilm(id);
-        User user = jdbcTemplate.queryForObject("SELECT * FROM users WHERE id = ?", new UserRowMapper(), userId);
-        if (film == null) {
-            throw new NotFoundException("Такого фильма не существует");
-        }
-
-        if (user == null) {
-            throw new NotFoundException("Такого пользователя не существует");
-        }
-
         String request = "DELETE FROM likes WHERE film_id = ? AND user_id = ?";
         jdbcTemplate.update(request, id, userId);
         System.out.println("Лайк был удален из базы данных");
@@ -136,7 +107,7 @@ public class FilmDbStorage {
     }
 
     public Genre getGenre(long id) {
-        String request = "SELECT * FROM genre WHERE id = ?";
+        String request = "SELECT * FROM genres WHERE id = ?";
         if (id > 50) {
             throw new NotFoundException("Жанр не найден");
         }
@@ -144,12 +115,11 @@ public class FilmDbStorage {
     }
 
     public List<Genre> getGenres() {
-        String request = "SELECT * FROM genre";
+        String request = "SELECT * FROM genres";
         List<Genre> genres = jdbcTemplate.query(request, new GenreRowMapper());
         if (genres.isEmpty()) {
             throw new NotFoundException("Жанры не найдены");
         }
-        System.out.println("Получение жанров");
         return genres;
     }
 

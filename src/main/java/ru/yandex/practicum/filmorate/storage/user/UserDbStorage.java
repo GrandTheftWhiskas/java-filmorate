@@ -26,7 +26,6 @@ public class UserDbStorage {
         String request = "INSERT INTO users(name, email, login, birthday) " + "values(?, ?, ?, ?)";
         jdbcTemplate.update(request, user.getName(), user.getEmail(), user.getLogin(),
                 Date.valueOf(user.getBirthday()));
-        System.out.println("Пользователь добавлен в базу данных");
         return user;
     }
 
@@ -36,16 +35,14 @@ public class UserDbStorage {
                 user.getName(), user.getBirthday(), user.getId());
         if (result == 0) {
             throw new NotFoundException("Указанного пользователя нет в базе данных");
-        } else {
-            System.out.println("Запись обновлена в базе данных");
         }
+
         return user;
     }
 
     public void delUser(User user) {
         String request = "DELETE FROM users WHERE id = ?";
         jdbcTemplate.update(request, user.getId());
-        System.out.println("Запись успешно удалена из базы данных");
     }
 
     public User getUser(long id) {
@@ -65,44 +62,21 @@ public class UserDbStorage {
     public List<User> addFriend(long userId, long friendId) {
         User user = getUser(userId);
         User friend = getUser(friendId);
-        if (user == null) {
-            throw new NotFoundException("Пользователя не существует");
-        }
-
-        if (friend == null) {
-            throw new NotFoundException("Друга не существует");
-        }
         String request = "INSERT INTO friends(user_id, friend_id, status) " + "values(?, ?, ?)";
-        if (friend.getFriends().contains(userId)) {
+        if (getFriends(friendId).contains(userId)) {
             jdbcTemplate.update(request, userId, friendId, "confirmed");
             jdbcTemplate.update("UPDATE friends SET friend_id = ?, id = ?, status = ?",
                     friendId, userId, "confirmed");
-            System.out.println("Друг успешно добавлен. Дружба подтвержденная");
         } else {
             jdbcTemplate.update(request, userId, friendId, "unconfirmed");
-            System.out.println("Друг успешно добавлен. Дружба неподтвержденная");
         }
         return Arrays.asList(user, friend);
     }
 
     public User delFriend(long userId, long friendId) {
         User user = getUser(userId);
-        User friend = getUser(friendId);
-        if (user == null) {
-            throw new NotFoundException("Пользователя с указанным ID не существует");
-        }
-
-        if (friend == null) {
-            throw new NotFoundException("Друга с указанным ID не существует");
-        }
-
-        if (!user.getFriends().contains(friendId)) {
-            System.out.println("Пользователь не был добавлен в друзья");
-        }
-
         String request = "DELETE FROM friends WHERE user_id = ? AND friend_id = ?";
         jdbcTemplate.update(request, userId, friendId);
-        System.out.println("Пользователь удален из друзей");
         return user;
     }
 

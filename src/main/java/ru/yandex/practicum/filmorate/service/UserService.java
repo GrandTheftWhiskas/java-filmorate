@@ -5,18 +5,15 @@ import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.exceptions.ValidationException;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.storage.user.UserDbStorage;
-import ru.yandex.practicum.filmorate.storage.user.UserStorage;
 import java.time.LocalDate;
 import java.util.List;
 
 @Service
 public class UserService {
-    private final UserStorage userStorage;
     private final UserDbStorage userDbStorage;
 
     @Autowired
-    public UserService(UserStorage userStorage, UserDbStorage userDbStorage) {
-        this.userStorage = userStorage;
+    public UserService(UserDbStorage userDbStorage) {
         this.userDbStorage = userDbStorage;
     }
 
@@ -52,7 +49,7 @@ public class UserService {
         if (user.getBirthday().isAfter(LocalDate.now())) {
             throw new ValidationException("Дата рождения не может быть в будущем");
         }
-        return userStorage.postUser(user);
+        return userDbStorage.postUser(user);
     }
 
     public User putUser(User user) {
@@ -72,10 +69,10 @@ public class UserService {
             throw new ValidationException("Дата рождения не может быть в будущем");
         }
 
-        return userStorage.putUser(user);
+        return userDbStorage.putUser(user);
     }
 
     public List<User> getUsers() {
-        return userStorage.getUsers();
+        return userDbStorage.getUsers();
     }
 }
