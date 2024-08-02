@@ -12,7 +12,7 @@ import java.util.List;
 
 @Component
 @Qualifier("userDbStorage")
-public class UserDbStorage {
+public class UserDbStorage implements UserStorage {
     private final JdbcTemplate jdbcTemplate;
     private int id = 1;
 
@@ -63,7 +63,7 @@ public class UserDbStorage {
         User user = getUser(userId);
         User friend = getUser(friendId);
         String request = "INSERT INTO friends(user_id, friend_id, status) " + "values(?, ?, ?)";
-        if (getFriends(friendId).contains(userId)) {
+        if (getFriends(friendId).stream().mapToLong(User::getId).anyMatch(id -> id == userId)) {
             jdbcTemplate.update(request, userId, friendId, "confirmed");
             jdbcTemplate.update("UPDATE friends SET friend_id = ?, id = ?, status = ?",
                     friendId, userId, "confirmed");
@@ -73,14 +73,12 @@ public class UserDbStorage {
         return Arrays.asList(user, friend);
     }
 
-    public User delFriend(long userId, long friendId) {
-        if (getFriends(friendId).contains(userId)) {
-            throw new NotFoundException("Пользователь не был добавлен в друзья");
-        }
+    public List<User> delFriend(long userId, long friendId) {
         User user = getUser(userId);
+        User friend = getUser(friendId);
         String request = "DELETE FROM friends WHERE user_id = ? AND friend_id = ?";
         jdbcTemplate.update(request, userId, friendId);
-        return user;
+        return Arrays.asList(user, friend);
     }
 
     public List<User> getFriends(long id) {

@@ -6,7 +6,9 @@ import ru.yandex.practicum.filmorate.exceptions.NotFoundException;
 import ru.yandex.practicum.filmorate.exceptions.ValidationException;
 import ru.yandex.practicum.filmorate.model.*;
 import ru.yandex.practicum.filmorate.storage.film.FilmDbStorage;
+import ru.yandex.practicum.filmorate.storage.film.FilmStorage;
 import ru.yandex.practicum.filmorate.storage.user.UserDbStorage;
+import ru.yandex.practicum.filmorate.storage.user.UserStorage;
 
 import java.time.LocalDate;
 import java.util.Collection;
@@ -16,20 +18,20 @@ import static java.time.Month.DECEMBER;
 
 @Service
 public class FilmService {
-    private final FilmDbStorage filmDbStorage;
-    private final UserDbStorage userDbStorage;
+    private final FilmStorage filmStorage;
+    private final UserStorage userStorage;
     private static final int MAX_SYMBOLS = 200;
     private static final LocalDate MOVIE_BIRTHDAY = LocalDate.of(1895, DECEMBER, 28);
 
     @Autowired
-    public FilmService(FilmDbStorage filmDbStorage, UserDbStorage userDbStorage) {
-        this.filmDbStorage = filmDbStorage;
-        this.userDbStorage = userDbStorage;
+    public FilmService(FilmStorage filmStorage, UserStorage userStorage) {
+        this.filmStorage = filmStorage;
+        this.userStorage = userStorage;
     }
 
     public Film addLike(long id, long userId) {
-        User user = userDbStorage.getUser(id);
-        User friend = userDbStorage.getUser(userId);
+        User user = userStorage.getUser(id);
+        User friend = userStorage.getUser(userId);
         if (user == null) {
             throw new NotFoundException("Пользователя не существует");
         }
@@ -38,12 +40,12 @@ public class FilmService {
             throw new NotFoundException("Друга не существует");
         }
 
-        return filmDbStorage.addLike(id, userId);
+        return filmStorage.addLike(id, userId);
     }
 
     public Film delLike(long id, long userId) {
-        User user = userDbStorage.getUser(id);
-        User friend = userDbStorage.getUser(userId);
+        User user = userStorage.getUser(id);
+        User friend = userStorage.getUser(userId);
         if (user == null) {
             throw new NotFoundException("Пользователя не существует");
         }
@@ -52,10 +54,10 @@ public class FilmService {
             throw new NotFoundException("Друга не существует");
         }
 
-        if (!userDbStorage.getFriends(userId).contains(userId)) {
+        if (!userStorage.getFriends(userId).contains(userId)) {
             System.out.println("Пользователь не был добавлен в друзья");
         }
-        return filmDbStorage.delLike(id, userId);
+        return filmStorage.delLike(id, userId);
     }
 
     public Film postFilm(Film film) {
@@ -78,7 +80,7 @@ public class FilmService {
         if (film.getMpa().getId() >= 10) {
             throw new ValidationException("Указан неверный рейтинг");
         }
-        return filmDbStorage.postFilm(film);
+        return filmStorage.postFilm(film);
     }
 
     public Film putFilm(Film film) {
@@ -93,34 +95,34 @@ public class FilmService {
         if (film.getDuration() < 0) {
             throw new ValidationException("Продолжительность не может быть отрицательным числом");
         }
-        return filmDbStorage.putFilm(film);
+        return filmStorage.putFilm(film);
     }
 
     public Film getFilm(long id) {
-        return filmDbStorage.getFilm(id);
+        return filmStorage.getFilm(id);
     }
 
     public Collection<Film> getFilms() {
-        return filmDbStorage.getFilms();
+        return filmStorage.getFilms();
     }
 
     public Genre getGenre(long id) {
-        return filmDbStorage.getGenre(id);
+        return filmStorage.getGenre(id);
     }
 
     public List<Genre> getGenres() {
-        return filmDbStorage.getGenres();
+        return filmStorage.getGenres();
     }
 
     public MPA getMpa(long id) {
-       return filmDbStorage.getMpa(id);
+       return filmStorage.getMpa(id);
     }
 
     public List<MPA> getAllMpa() {
-        return filmDbStorage.getAllMpa();
+        return filmStorage.getAllMpa();
     }
 
     public Collection<Film> getMostPopularFilms(int count) {
-        return filmDbStorage.getMostPopularFilms(count);
+        return filmStorage.getMostPopularFilms(count);
     }
 }

@@ -14,7 +14,7 @@ import java.util.*;
 
 @Component
 @Qualifier("filmDbStorage")
-public class FilmDbStorage {
+public class FilmDbStorage implements FilmStorage {
     private final JdbcTemplate jdbcTemplate;
     private int id = 1;
 

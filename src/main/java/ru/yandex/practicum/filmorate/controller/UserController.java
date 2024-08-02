@@ -12,7 +12,6 @@ import java.util.List;
 @RestController
 @RequestMapping("/users")
 @Slf4j
-@Valid
 public class UserController {
     private final UserService userService;
 
@@ -22,27 +21,27 @@ public class UserController {
     }
 
     @PostMapping
-    public User postUser(@RequestBody User user) {
+    public User postUser(@Valid @RequestBody User user) {
         log.info("Добавление пользователя...");
         return userService.postUser(user);
     }
 
 
     @PutMapping
-    public User putUser(@RequestBody User user) {
+    public User putUser(@Valid @RequestBody User user) {
         log.info("Обновление пользователя...");
         return userService.putUser(user);
     }
 
 
     @PutMapping("/{id}/friends/{friendId}")
-    public List<User> addFriend(@PathVariable long id, @PathVariable long friendId) {
+    public List<User> addFriend(@Valid @PathVariable long id, @PathVariable long friendId) {
        return userService.addFriend(id, friendId);
     }
 
 
     @DeleteMapping("/{id}/friends/{friendId}")
-    public User delFriend(@PathVariable long id, @PathVariable long friendId) {
+    public List<User> delFriend(@Valid @PathVariable long id, @PathVariable long friendId) {
         return userService.delFriend(id, friendId);
     }
 
@@ -54,13 +53,13 @@ public class UserController {
 
 
     @GetMapping("/{id}/friends")
-    public List<User> getFriends(@PathVariable long id) {
+    public List<User> getFriends(@Valid @PathVariable long id) {
         return userService.getFriends(id);
     }
 
 
     @GetMapping("/{id}/friends/common/{otherId}")
-    public List<User> getMutualFriends(@PathVariable long id, @PathVariable long otherId) {
+    public List<User> getMutualFriends(@Valid @PathVariable long id, @PathVariable long otherId) {
         log.info("Поиск общих друзей...");
         return userService.getMutualFriends(id, otherId);
     }

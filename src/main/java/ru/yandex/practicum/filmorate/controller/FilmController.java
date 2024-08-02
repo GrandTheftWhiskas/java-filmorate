@@ -16,7 +16,6 @@ import java.util.List;
 
 @RestController
 @Slf4j
-@Valid
 public class FilmController {
    private final FilmService filmService;
 
@@ -26,30 +25,30 @@ public class FilmController {
     }
 
     @PostMapping("/films")
-    public Film postFilm(@RequestBody Film film) {
+    public Film postFilm(@Valid @RequestBody Film film) {
         log.info("Добавление фильма...");
         return filmService.postFilm(film);
     }
 
     @PutMapping("/films")
-    public Film putFilm(@RequestBody Film film) {
+    public Film putFilm(@Valid @RequestBody Film film) {
         log.info("Обновление фильма...");
         return filmService.putFilm(film);
     }
 
     @PutMapping("/films/{id}/like/{userId}")
-    public Film addLike(@PathVariable long id, @PathVariable long userId) {
+    public Film addLike(@Valid @PathVariable long id, @PathVariable long userId) {
         return filmService.addLike(id, userId);
     }
 
 
     @DeleteMapping("/films/{id}/like/{userId}")
-    public Film delLike(@PathVariable long id, @PathVariable long userId) {
+    public Film delLike(@Valid @PathVariable long id, @PathVariable long userId) {
         return filmService.delLike(id, userId);
     }
 
     @GetMapping("/films/{id}")
-    public Film getFilm(@PathVariable long id) {
+    public Film getFilm(@Valid @PathVariable long id) {
         return filmService.getFilm(id);
     }
 
@@ -60,7 +59,7 @@ public class FilmController {
 
 
     @GetMapping("/genres/{id}")
-    public Genre getGenre(@PathVariable long id) {
+    public Genre getGenre(@Valid @PathVariable long id) {
         return filmService.getGenre(id);
     }
 
@@ -71,7 +70,7 @@ public class FilmController {
 
 
     @GetMapping("/mpa/{id}")
-    public MPA getMpa(@PathVariable long id) {
+    public MPA getMpa(@Valid @PathVariable long id) {
         return filmService.getMpa(id);
     }
 
@@ -82,7 +81,7 @@ public class FilmController {
 
     @GetMapping("/films/popular")
     @ResponseStatus(HttpStatus.OK)
-    public Collection<Film> getMostPopularFilms(@RequestParam(defaultValue = "10") int count) {
+    public Collection<Film> getMostPopularFilms(@Valid @RequestParam(defaultValue = "10") int count) {
         log.info("Поиск популярных фильмов...");
         return filmService.getMostPopularFilms(count);
     }

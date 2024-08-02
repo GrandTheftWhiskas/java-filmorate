@@ -17,7 +17,6 @@ public class Film {
     private long id;
     @NotBlank
     private final String name;
-    @Max(200)
     private final String description;
     @Setter
     private List<Genre> genres;

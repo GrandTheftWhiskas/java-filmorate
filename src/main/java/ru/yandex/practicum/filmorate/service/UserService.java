@@ -2,35 +2,37 @@ package ru.yandex.practicum.filmorate.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import ru.yandex.practicum.filmorate.exceptions.NotFoundException;
 import ru.yandex.practicum.filmorate.exceptions.ValidationException;
 import ru.yandex.practicum.filmorate.model.User;
-import ru.yandex.practicum.filmorate.storage.user.UserDbStorage;
+import ru.yandex.practicum.filmorate.storage.user.UserStorage;
+
 import java.time.LocalDate;
 import java.util.List;
 
 @Service
 public class UserService {
-    private final UserDbStorage userDbStorage;
+    private final UserStorage userStorage;
 
     @Autowired
-    public UserService(UserDbStorage userDbStorage) {
-        this.userDbStorage = userDbStorage;
+    public UserService(UserStorage userStorage) {
+        this.userStorage = userStorage;
     }
 
     public List<User> addFriend(long id, long friendId) {
-        return userDbStorage.addFriend(id, friendId);
+        return userStorage.addFriend(id, friendId);
     }
 
-    public User delFriend(long id, long friendId) {
-        return userDbStorage.delFriend(id, friendId);
+    public List<User> delFriend(long id, long friendId) {
+        return userStorage.delFriend(id, friendId);
     }
 
     public List<User> getFriends(long id) {
-        return userDbStorage.getFriends(id);
+        return userStorage.getFriends(id);
     }
 
     public List<User> getMutualFriends(long id, long otherId) {
-        return userDbStorage.getMutualFriends(id, otherId);
+        return userStorage.getMutualFriends(id, otherId);
     }
 
     public User postUser(User user) {
@@ -49,7 +51,7 @@ public class UserService {
         if (user.getBirthday().isAfter(LocalDate.now())) {
             throw new ValidationException("Дата рождения не может быть в будущем");
         }
-        return userDbStorage.postUser(user);
+        return userStorage.postUser(user);
     }
 
     public User putUser(User user) {
@@ -69,10 +71,10 @@ public class UserService {
             throw new ValidationException("Дата рождения не может быть в будущем");
         }
 
-        return userDbStorage.putUser(user);
+        return userStorage.putUser(user);
     }
 
     public List<User> getUsers() {
-        return userDbStorage.getUsers();
+        return userStorage.getUsers();
     }
 }
