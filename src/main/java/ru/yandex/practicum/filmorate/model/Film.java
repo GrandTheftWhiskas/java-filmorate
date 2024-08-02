@@ -1,6 +1,5 @@
 package ru.yandex.practicum.filmorate.model;
 import jakarta.validation.Valid;
-import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.NotBlank;
 import lombok.*;
 import java.time.Duration;
