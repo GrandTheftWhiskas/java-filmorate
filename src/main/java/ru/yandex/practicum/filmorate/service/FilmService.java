@@ -2,14 +2,15 @@ package ru.yandex.practicum.filmorate.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.RequestParam;
 import ru.yandex.practicum.filmorate.exceptions.NotFoundException;
 import ru.yandex.practicum.filmorate.exceptions.ValidationException;
 import ru.yandex.practicum.filmorate.model.*;
 import ru.yandex.practicum.filmorate.storage.film.FilmStorage;
 import ru.yandex.practicum.filmorate.storage.user.UserStorage;
+
 import java.time.LocalDate;
 import java.util.Collection;
+import java.util.List;
 
 import static java.time.Month.DECEMBER;
 
@@ -21,37 +22,40 @@ public class FilmService {
     private static final LocalDate MOVIE_BIRTHDAY = LocalDate.of(1895, DECEMBER, 28);
 
     @Autowired
-    public FilmService(FilmStorage filmStorage, UserStorage  userStorage) {
+    public FilmService(FilmStorage filmStorage, UserStorage userStorage) {
         this.filmStorage = filmStorage;
         this.userStorage = userStorage;
     }
 
     public Film addLike(long id, long userId) {
-        Film film = filmStorage.getFilm(id);
-        User user = userStorage.getUser(userId);
-        if (film == null) {
-            throw new NotFoundException("Такого фильма не существует");
+        User user = userStorage.getUser(id);
+        User friend = userStorage.getUser(userId);
+        if (user == null) {
+            throw new NotFoundException("Пользователя не существует");
         }
 
-        if (user == null) {
-            throw new NotFoundException("Такого пользователя не существует");
+        if (friend == null) {
+            throw new NotFoundException("Друга не существует");
         }
-        film.like(userId);
-        return film;
+
+        return filmStorage.addLike(id, userId);
     }
 
     public Film delLike(long id, long userId) {
-        Film film = filmStorage.getFilm(id);
-        User user = userStorage.getUser(userId);
-        if (film == null) {
-            throw new NotFoundException("Такого фильма не существует");
+        User user = userStorage.getUser(id);
+        User friend = userStorage.getUser(userId);
+        if (user == null) {
+            throw new NotFoundException("Пользователя не существует");
         }
 
-        if (user == null) {
-            throw new NotFoundException("Такого пользователя не существует");
+        if (friend == null) {
+            throw new NotFoundException("Друга не существует");
         }
-        film.delLike(userId);
-        return film;
+
+        if (!userStorage.getFriends(userId).contains(userId)) {
+            System.out.println("Пользователь не был добавлен в друзья");
+        }
+        return filmStorage.delLike(id, userId);
     }
 
     public Film postFilm(Film film) {
@@ -69,6 +73,10 @@ public class FilmService {
 
         if (film.getReleaseDate().isBefore(MOVIE_BIRTHDAY)) {
             throw new ValidationException("Указана неверная дата");
+        }
+
+        if (film.getMpa().getId() >= 10) {
+            throw new ValidationException("Указан неверный рейтинг");
         }
         return filmStorage.postFilm(film);
     }
@@ -88,11 +96,31 @@ public class FilmService {
         return filmStorage.putFilm(film);
     }
 
+    public Film getFilm(long id) {
+        return filmStorage.getFilm(id);
+    }
+
     public Collection<Film> getFilms() {
         return filmStorage.getFilms();
     }
 
-    public Collection<Film> getMostPopularFilms(@RequestParam(defaultValue = "10") int count) {
+    public Genre getGenre(long id) {
+        return filmStorage.getGenre(id);
+    }
+
+    public List<Genre> getGenres() {
+        return filmStorage.getGenres();
+    }
+
+    public MPA getMpa(long id) {
+       return filmStorage.getMpa(id);
+    }
+
+    public List<MPA> getAllMpa() {
+        return filmStorage.getAllMpa();
+    }
+
+    public Collection<Film> getMostPopularFilms(int count) {
         return filmStorage.getMostPopularFilms(count);
     }
 }
